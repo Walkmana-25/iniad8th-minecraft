@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import os
 import subprocess
+from rcon.source import Client
 
 DISCORD_TOKEN = os.getenv("BOT_TOKEN")
 
@@ -60,7 +61,8 @@ async def memory(interaction: discord.Interaction):
 
 @tree.command(name="add_whitelist")
 async def add_white_list(interaction: discord.Integration, user: str):
-    await interaction.response.send_message(f"Added {user} to whitelist")
+    sub = subprocess.run(["docker", "exec minecraft_mc_1", "rcon-cli", "whitelist", "add", user], stdout=subprocess.PIPE)
+    await interaction.response.send_message(f"Added {user} to whitelist log:{sub.stdout.decode()}", ephemeral=True)
     
 
 
