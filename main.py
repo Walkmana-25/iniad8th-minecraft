@@ -11,7 +11,7 @@ if DISCORD_TOKEN is None:
 
 # Rest of the code
 
-intents = discord.Intents.default()
+intents = discord.Intents.all()
 intents.typing = False
 intents.presences = False
 
@@ -22,11 +22,41 @@ tree = discord.app_commands.CommandTree(client)
 async def on_ready():
     print(f"Logged in as {client.user.name} ({client.user.id})")
     print("------")
+    print("Syncing commands")
     await tree.sync()
+    print("Synced commands")
 
 @tree.command(name = "ping", description="ping! Pong!")
 async def hello(interaction: discord.Interaction):
     await interaction.response.send_message("Pong!", ephemeral=True)
+    print("sync")
+    await tree.sync(guild=discord.Object(id = 911047487144484947))
+    print("synced")
+    await tree.sync()
+    print("super sync")
+
+
+@tree.command(name = "sync", description="sync command")
+async def sync(interaction: discord.Interaction):
+    await interaction.response.send_message("Starting Sync", ephemeral=True)
+    print("sync")
+    await tree.sync(guild=discord.Object(id = 911047487144484947))
+    print("synced")
+    await tree.sync()
+    print("super sync")
+
+@tree.command(name = "free", description="show memory information")
+async def memory(interaction: discord.Interaction):
+    sub = subprocess.run(["free", "-h"], stdout=subprocess.PIPE)
+    print(sub.stdout.decode())
+    await interaction.response.send_message(sub.stdout.decode(), ephemeral=True)
+
+
+@tree.command(name = "avg", description="show load average")
+async def memory(interaction: discord.Interaction):
+    sub = subprocess.run(["cat", "/proc/loadavg"], stdout=subprocess.PIPE)
+    print(sub.stdout.decode())
+    await interaction.response.send_message(sub.stdout.decode(), ephemeral=True)
 
 @tree.command(name="add_whitelist")
 async def add_white_list(interaction: discord.Integration, user: str):
