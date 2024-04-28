@@ -1,3 +1,5 @@
+from typing import Optional, Literal
+
 import discord
 from discord.ext import commands
 import os
@@ -16,54 +18,77 @@ intents = discord.Intents.all()
 intents.typing = False
 intents.presences = False
 
-client = discord.Client(intents=intents)
-tree = discord.app_commands.CommandTree(client)
+bot = commands.Bot(intents=intents, command_prefix="!")
+tree = bot.tree
 
-@client.event
+
+@bot.event
 async def on_ready():
-    print(f"Logged in as {client.user.name} ({client.user.id})")
+    print(f"Logged in as {bot.user.name} ({bot.user.id})")
     print("------")
-    print("Syncing commands")
-    await tree.sync()
-    print("Synced commands")
 
-@tree.command(name = "ping", description="ping! Pong!")
+
+@tree.command(name="ping", description="ping! Pong!")
 async def hello(interaction: discord.Interaction):
     await interaction.response.send_message("Pong!", ephemeral=True)
-    print("sync")
-    await tree.sync(guild=discord.Object(id = 911047487144484947))
-    print("synced")
-    await tree.sync()
-    print("super sync")
 
 
-@tree.command(name = "sync", description="sync command")
-async def sync(interaction: discord.Interaction):
-    await interaction.response.send_message("Starting Sync", ephemeral=True)
-    print("sync")
-    await tree.sync(guild=discord.Object(id = 911047487144484947))
-    print("synced")
-    await tree.sync()
-    print("super sync")
+# Umbra's sync command
+# Source: https://about.abstractumbra.dev/discord.py/2023/01/29/sync-command-example.html
+@bot.command()
+@commands.guild_only()
+@commands.is_owner()
+async def sync(ctx: commands.Context, guilds: commands.Greedy[discord.Object],
+               spec: Optional[Literal["~", "*", "^"]] = None) -> None:
+    if not guilds:
+        if spec == "~":
+            synced = await bot.tree.sync(guild=ctx.guild)
+        elif spec == "*":
+            ctx.bot.tree.copy_global_to(guild=ctx.guild)
+            synced = await bot.tree.sync(guild=ctx.guild)
+        elif spec == "^":
+            ctx.bot.tree.clear_commands(guild=ctx.guild)
+            await ctx.bot.tree.sync(guild=ctx.guild)
+            synced = []
+        else:
+            synced = await ctx.bot.tree.sync()
 
-@tree.command(name = "free", description="show memory information")
+        await ctx.send(
+            f"Synced {len(synced)} commands {'globally' if spec is None else 'to the current guild.'}"
+        )
+        return
+
+    ret = 0
+    for guild in guilds:
+        try:
+            await ctx.bot.tree.sync(guild=guild)
+        except discord.HTTPException:
+            pass
+        else:
+            ret += 1
+
+    await ctx.send(f"Synced the tree to {ret}/{len(guilds)}.")
+
+
+@tree.command(name="free", description="show memory information")
 async def memory(interaction: discord.Interaction):
     sub = subprocess.run(["free", "-h"], stdout=subprocess.PIPE)
     print(sub.stdout.decode())
     await interaction.response.send_message(sub.stdout.decode(), ephemeral=True)
 
 
-@tree.command(name = "avg", description="show load average")
+@tree.command(name="avg", description="show load average")
 async def memory(interaction: discord.Interaction):
     sub = subprocess.run(["cat", "/proc/loadavg"], stdout=subprocess.PIPE)
     print(sub.stdout.decode())
     await interaction.response.send_message(sub.stdout.decode(), ephemeral=True)
 
+
 @tree.command(name="add_whitelist")
 async def add_white_list(interaction: discord.Integration, user: str):
-    sub = subprocess.run(["docker", "exec minecraft_mc_1", "rcon-cli", "whitelist", "add", user], stdout=subprocess.PIPE)
+    sub = subprocess.run(["docker", "exec minecraft_mc_1", "rcon-cli", "whitelist", "add", user],
+                         stdout=subprocess.PIPE)
     await interaction.response.send_message(f"Added {user} to whitelist log:{sub.stdout.decode()}", ephemeral=True)
-    
 
 
-client.run(DISCORD_TOKEN)
+bot.run(DISCORD_TOKEN)
