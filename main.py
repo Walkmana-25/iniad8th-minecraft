@@ -16,13 +16,13 @@ intents = discord.Intents.all()
 intents.typing = False
 intents.presences = False
 
-client = discord.Client(intents=intents)
-tree = discord.app_commands.CommandTree(client)
+bot = commands.Bot(intents=intents, command_prefix="!")
+tree = bot.tree
 
 
-@client.event
+@bot.event
 async def on_ready():
-    print(f"Logged in as {client.user.name} ({client.user.id})")
+    print(f"Logged in as {bot.user.name} ({bot.user.id})")
     print("------")
     print("Syncing commands")
     await tree.sync()
@@ -70,4 +70,4 @@ async def add_white_list(interaction: discord.Integration, user: str):
     await interaction.response.send_message(f"Added {user} to whitelist log:{sub.stdout.decode()}", ephemeral=True)
 
 
-client.run(DISCORD_TOKEN)
+bot.run(DISCORD_TOKEN)
