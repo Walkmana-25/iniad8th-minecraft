@@ -19,6 +19,7 @@ intents.presences = False
 client = discord.Client(intents=intents)
 tree = discord.app_commands.CommandTree(client)
 
+
 @client.event
 async def on_ready():
     print(f"Logged in as {client.user.name} ({client.user.id})")
@@ -27,43 +28,46 @@ async def on_ready():
     await tree.sync()
     print("Synced commands")
 
-@tree.command(name = "ping", description="ping! Pong!")
+
+@tree.command(name="ping", description="ping! Pong!")
 async def hello(interaction: discord.Interaction):
     await interaction.response.send_message("Pong!", ephemeral=True)
     print("sync")
-    await tree.sync(guild=discord.Object(id = 911047487144484947))
+    await tree.sync(guild=discord.Object(id=911047487144484947))
     print("synced")
     await tree.sync()
     print("super sync")
 
 
-@tree.command(name = "sync", description="sync command")
+@tree.command(name="sync", description="sync command")
 async def sync(interaction: discord.Interaction):
     await interaction.response.send_message("Starting Sync", ephemeral=True)
     print("sync")
-    await tree.sync(guild=discord.Object(id = 911047487144484947))
+    await tree.sync(guild=discord.Object(id=911047487144484947))
     print("synced")
     await tree.sync()
     print("super sync")
 
-@tree.command(name = "free", description="show memory information")
+
+@tree.command(name="free", description="show memory information")
 async def memory(interaction: discord.Interaction):
     sub = subprocess.run(["free", "-h"], stdout=subprocess.PIPE)
     print(sub.stdout.decode())
     await interaction.response.send_message(sub.stdout.decode(), ephemeral=True)
 
 
-@tree.command(name = "avg", description="show load average")
+@tree.command(name="avg", description="show load average")
 async def memory(interaction: discord.Interaction):
     sub = subprocess.run(["cat", "/proc/loadavg"], stdout=subprocess.PIPE)
     print(sub.stdout.decode())
     await interaction.response.send_message(sub.stdout.decode(), ephemeral=True)
 
+
 @tree.command(name="add_whitelist")
 async def add_white_list(interaction: discord.Integration, user: str):
-    sub = subprocess.run(["docker", "exec minecraft_mc_1", "rcon-cli", "whitelist", "add", user], stdout=subprocess.PIPE)
+    sub = subprocess.run(["docker", "exec minecraft_mc_1", "rcon-cli", "whitelist", "add", user],
+                         stdout=subprocess.PIPE)
     await interaction.response.send_message(f"Added {user} to whitelist log:{sub.stdout.decode()}", ephemeral=True)
-    
 
 
 client.run(DISCORD_TOKEN)
