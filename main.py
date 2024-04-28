@@ -24,9 +24,6 @@ tree = bot.tree
 async def on_ready():
     print(f"Logged in as {bot.user.name} ({bot.user.id})")
     print("------")
-    print("Syncing commands")
-    await tree.sync()
-    print("Synced commands")
 
 
 @tree.command(name="ping", description="ping! Pong!")
