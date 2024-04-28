@@ -31,11 +31,6 @@ async def on_ready():
 @tree.command(name="ping", description="ping! Pong!")
 async def hello(interaction: discord.Interaction):
     await interaction.response.send_message("Pong!", ephemeral=True)
-    print("sync")
-    await tree.sync(guild=discord.Object(id=911047487144484947))
-    print("synced")
-    await tree.sync()
-    print("super sync")
 
 
 # Umbra's sync command
