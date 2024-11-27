@@ -78,7 +78,7 @@ async def memory(interaction: discord.Interaction):
 
 
 @tree.command(name="avg", description="show load average")
-async def memory(interaction: discord.Interaction):
+async def avg(interaction: discord.Interaction):
     sub = subprocess.run(["cat", "/proc/loadavg"], stdout=subprocess.PIPE)
     print(sub.stdout.decode())
     await interaction.response.send_message(sub.stdout.decode(), ephemeral=True)
@@ -86,9 +86,14 @@ async def memory(interaction: discord.Interaction):
 
 @tree.command(name="add_whitelist")
 async def add_white_list(interaction: discord.Integration, user: str):
-    sub = subprocess.run(["docker", "exec minecraft_mc_1", "rcon-cli", "whitelist", "add", user],
+    sub = subprocess.run(["docker", "exec minecraft-mc-1", "rcon-cli", "whitelist", "add", user],
                          stdout=subprocess.PIPE)
     await interaction.response.send_message(f"Added {user} to whitelist log:{sub.stdout.decode()}", ephemeral=True)
 
+@tree.command(name="Show Joined Users")
+async def user_list(interaction: discord.Integration, user: str):
+    sub = subprocess.run(["docker", "exec minecraft-mc-1", "rcon-cli", "list"],
+                         stdout=subprocess.PIPE)
+    await interaction.response.send_message(f"Playing Users: \n {sub.stdout.decode()}", ephemeral=True)
 
 bot.run(DISCORD_TOKEN)
