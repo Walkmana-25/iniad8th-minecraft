@@ -96,4 +96,17 @@ async def user_list(interaction: discord.Integration):
                          stdout=subprocess.PIPE)
     await interaction.response.send_message(f"Playing Users: \n {sub.stdout.decode()}", ephemeral=True)
 
+@tree.command(name="Show Whitelist")
+async def show_whitelist(interaction: discord.Integration):
+    sub = subprocess.run(["docker", "exec minecraft-mc-1", "rcon-cli", "whitelist", "list"],
+                         stdout=subprocess.PIPE)
+    await interaction.response.send_message(f"Whitelist: \n {sub.stdout.decode()}", ephemeral=True)
+
+@tree.command(name="Reload Whitelist")
+async def reload_whitelist(interaction: discord.Integration):
+    sub = subprocess.run(["docker", "exec minecraft-mc-1", "rcon-cli", "whitelist", "reload"],
+                         stdout=subprocess.PIPE)
+    await interaction.response.send_message(f"Whitelist Reload: \n {sub.stdout.decode()}", ephemeral=True)
+
+
 bot.run(DISCORD_TOKEN)
