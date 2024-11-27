@@ -91,7 +91,7 @@ async def add_white_list(interaction: discord.Integration, user: str):
     await interaction.response.send_message(f"Added {user} to whitelist log:{sub.stdout.decode()}", ephemeral=True)
 
 @tree.command(name="Show Joined Users")
-async def user_list(interaction: discord.Integration, user: str):
+async def user_list(interaction: discord.Integration):
     sub = subprocess.run(["docker", "exec minecraft-mc-1", "rcon-cli", "list"],
                          stdout=subprocess.PIPE)
     await interaction.response.send_message(f"Playing Users: \n {sub.stdout.decode()}", ephemeral=True)
