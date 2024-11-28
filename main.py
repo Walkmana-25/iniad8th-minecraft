@@ -98,7 +98,7 @@ async def user_list(interaction: discord.Integration):
 
 @tree.command(name="show_whitelist")
 async def show_whitelist(interaction: discord.Integration):
-    sub = subprocess.run(["docker", "exec", minecraft-mc-1", "rcon-cli", "whitelist", "list"],
+    sub = subprocess.run(["docker", "exec", "minecraft-mc-1", "rcon-cli", "whitelist", "list"],
                          stdout=subprocess.PIPE)
     await interaction.response.send_message(f"Whitelist: \n {sub.stdout.decode()}", ephemeral=True)
 
