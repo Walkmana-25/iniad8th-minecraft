@@ -86,25 +86,25 @@ async def avg(interaction: discord.Interaction):
 
 @tree.command(name="add_whitelist")
 async def add_white_list(interaction: discord.Integration, user: str):
-    sub = subprocess.run(["docker", "exec minecraft-mc-1", "rcon-cli", "whitelist", "add", user],
+    sub = subprocess.run(["docker", "exec", "minecraft-mc-1", "rcon-cli", "whitelist", "add", user],
                          stdout=subprocess.PIPE)
     await interaction.response.send_message(f"Added {user} to whitelist log:{sub.stdout.decode()}", ephemeral=True)
 
 @tree.command(name="show_users")
 async def user_list(interaction: discord.Integration):
-    sub = subprocess.run(["docker", "exec minecraft-mc-1", "rcon-cli", "list"],
+    sub = subprocess.run(["docker", "exec", "minecraft-mc-1", "rcon-cli", "list"],
                          stdout=subprocess.PIPE)
     await interaction.response.send_message(f"Playing Users: \n {sub.stdout.decode()}", ephemeral=True)
 
 @tree.command(name="show_whitelist")
 async def show_whitelist(interaction: discord.Integration):
-    sub = subprocess.run(["docker", "exec minecraft-mc-1", "rcon-cli", "whitelist", "list"],
+    sub = subprocess.run(["docker", "exec", minecraft-mc-1", "rcon-cli", "whitelist", "list"],
                          stdout=subprocess.PIPE)
     await interaction.response.send_message(f"Whitelist: \n {sub.stdout.decode()}", ephemeral=True)
 
 @tree.command(name="reload_whitelist")
 async def reload_whitelist(interaction: discord.Integration):
-    sub = subprocess.run(["docker", "exec minecraft-mc-1", "rcon-cli", "whitelist", "reload"],
+    sub = subprocess.run(["docker", "exec", "minecraft-mc-1", "rcon-cli", "whitelist", "reload"],
                          stdout=subprocess.PIPE)
     await interaction.response.send_message(f"Whitelist Reload: \n {sub.stdout.decode()}", ephemeral=True)
 
